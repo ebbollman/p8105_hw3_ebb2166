@@ -105,4 +105,29 @@ For every day of the week, coffee ice cream is ordered later in the day than app
 
 ## Problem 2
 
+##### Step 1: Read-in and tidy the activity dataset.
+
+First, pivot longer to list activity_count for each minute_of_day in long-form (tidy). Create wkday_vs_wknd variable, and make both this and day variable factors. Extract substring from "activity.1" etc values such that the remaining character form of 1 - 1440 can be converted to dbl form.  
+
+```{r}
+activity_df = 
+  read_csv("./data/accel_data.csv") %>% 
+  pivot_longer(
+    activity.1:activity.1440,
+    names_to = "minute_of_day",
+    values_to = "activity_count"
+  ) %>% 
+  mutate(day = factor(day),
+         minute_of_day = as.numeric(str_sub(minute_of_day, 10)),
+         wkday_vs_wknd = case_when(day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday") 
+                                   ~ "weekday",
+                             day %in% c("Saturday", "Sunday") ~ "weekend"),
+         wkday_vs_wknd = factor(wkday_vs_wknd)
+         ) %>% 
+  relocate(week, day, wkday_vs_wknd, minute_of_day, activity_count)
+
+activity_df
+```
+
+
 ## Problem 3
