@@ -129,5 +129,22 @@ activity_df =
 activity_df
 ```
 
+##### Step 2: Aggregate minute activity into daily activity count.
+
+First, group by week and day. Then compute the sum of activity_count as total_activity. Finally, format table for ease of reading. 
+
+```{r}
+activity_df %>% 
+  group_by(week, day) %>% 
+  summarize(total_activity = sum(activity_count)) %>% 
+  pivot_wider(
+    names_from = day,
+    values_from = total_activity
+  ) %>%
+  relocate(week, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) %>% 
+  knitr::kable()
+```
+
+This individual tended to perform similar levels of total daily activity on weekends as on weekdays during the first 3 weeks of data collection. However, in the 4th and 5th week of data collection, he performed noticeably less activity on weekends, particularly on Saturdays. 
 
 ## Problem 3
