@@ -149,13 +149,13 @@ This individual tended to perform similar levels of total daily activity on week
 
 ##### Step 3: Make plot of activity over course of each day.
 
-Want x-axis as minute_of_day, y-axis as activity_count
+Want to plot activity_count (y) vs minute_of_day. Since these are both continuous variables, start with scatterplot and add geom_line() to connect points, grouped by day_id with the idea of creating 35 lines connecting each day's activity variation over minutes during day. Each day of week is color. 
 
 ```{r}
 activity_df %>% 
   ggplot(aes(x = minute_of_day, y = activity_count, group = day_id, color = day)) + 
+  geom_point() +
   geom_line() + 
-  geom_smooth() + 
   labs(
     title = "Line plot of Activity over Course of Day",
     x = "Minutes of the Day",
@@ -167,6 +167,7 @@ activity_df %>%
   )
 ```
 
+This plot is hard to interpret given the volume of data. However, it appears as though the bulk of each day of the week was spent with activity_count < 2500. Even lower activity counts are seen in the first 250 and last 250 minutes of the day, likely representing time sleeping. Some outliers exist for periods in the middle 1/3 of the day generally, which was less common on Wednesdays (no exercise on hump day?).
 
 ```{r}
 activity_df %>%
@@ -176,6 +177,9 @@ activity_df %>%
   ) %>% 
   ggplot(aes(x = minute_of_day, y = activity_count, group = day_id, color = day)) +
   geom_boxplot() + 
+  scale_y_continuous(
+    breaks = seq(from = 0, to = 8000, by = 500)
+  ) + 
   labs(
     title = "Boxplot of Activity over Course of Day",
     x = "Minutes of the Day",
@@ -187,6 +191,6 @@ activity_df %>%
   )
 ```
 
-
+A quick boxplot on the same concept also demonstrates that all of the 'boxes' are low activity, such that 75% of activity counts for most days were 500 or fewer, suggesting this individual spends most of the day at rest or sedentary with brief periods of increased activity. 
 
 ## Problem 3
