@@ -147,4 +147,46 @@ activity_df %>%
 
 This individual tended to perform similar levels of total daily activity on weekends as on weekdays during the first 3 weeks of data collection. However, in the 4th and 5th week of data collection, he performed noticeably less activity on weekends, particularly on Saturdays. 
 
+##### Step 3: Make plot of activity over course of each day.
+
+Want x-axis as minute_of_day, y-axis as activity_count
+
+```{r}
+activity_df %>% 
+  ggplot(aes(x = minute_of_day, y = activity_count, group = day_id, color = day)) + 
+  geom_line() + 
+  geom_smooth() + 
+  labs(
+    title = "Line plot of Activity over Course of Day",
+    x = "Minutes of the Day",
+    y = "Activity Count"
+  ) + 
+  viridis::scale_color_viridis(
+    name = "day",
+    discrete = TRUE
+  )
+```
+
+
+```{r}
+activity_df %>%
+  mutate(
+    day = forcats::fct_relevel(day, c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
+                                      "Sunday"))
+  ) %>% 
+  ggplot(aes(x = minute_of_day, y = activity_count, group = day_id, color = day)) +
+  geom_boxplot() + 
+  labs(
+    title = "Boxplot of Activity over Course of Day",
+    x = "Minutes of the Day",
+    y = "Activity Count"
+  ) + 
+  viridis::scale_color_viridis(
+    name = "day",
+    discrete = TRUE
+  )
+```
+
+
+
 ## Problem 3
