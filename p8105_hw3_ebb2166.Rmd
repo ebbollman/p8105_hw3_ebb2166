@@ -29,17 +29,18 @@ scale_fill_discrete = scale_fill_viridis_d()
 
 ## Problem 1
 
-##### Step 1: describe the instacart dataset. 
+##### Step 1: Describe the instacart dataset. 
 
 ```{r}
 data("instacart")
 instacart
 ```
 
-This dataset contains `r nrow(instacart)` rows of individual product orders from Instacart and `r ncol(instacart)` columns of variables such as: user ID, product ID, day and hour of the week at which the order was placed, as well as product names and the departments / aisles in which they can be found. The dataset contains information from `r instacart %>% distinct(user_id) %>% count()` unique users who ordered `r instacart %>% distinct(product_id) %>% count()` products. 
+This dataset contains `r nrow(instacart)` rows of individual product orders from Instacart and `r ncol(instacart)` columns of variables such as user ID, product ID, and day and hour of the week at which the order was placed. More detailed information about the individual items is also available: product names, whether the product had been ordered previously, and the departments / aisles in which a product can be found. The dataset contains information from `r instacart %>% distinct(user_id) %>% count()` unique users who ordered `r instacart %>% distinct(product_id) %>% count()` distinct products. 
 
+##### Step 2: Identify the most in-demand aisles.
 
-Number of aisles and which have most items ordered from.
+Count the number of aisles, and identify which aisles have most items ordered from them.
 
 ```{r}
 instacart %>% 
@@ -47,7 +48,11 @@ instacart %>%
   arrange(desc(n))
 ```
 
-Plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered, arranging sensibly.
+The dataset contains 134 distinct aisles. "Fresh vegetables" and "fresh fruits" are ordered from most frequently, with nearly double the number of item orders than the third highest in-demand aisle, "packaged vegetables fruits"---which are then followed by "yogurt" and "packaged cheese."
+
+##### Step 3: Plot aisle popularity. 
+
+Create a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered, and arranging plot sensibly. Need to first count by aisle, then filter by item count >10,000. Should rotate x-axis labels so it is readable. Finally, re-order aisle according to n, from the aisle with the lowest number of items ordered to that with the highest ordered. 
 
 ```{r}
 instacart %>% 
@@ -58,12 +63,15 @@ instacart %>%
     aisle = fct_reorder(aisle, n)
   ) %>% 
   ggplot(aes(x = aisle, y = n)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1))
 ```
 
-Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table. 
-Step 1  of this is to filter these aisles and count most popular items in these aisles. Step 2: rank within each of the 3 aisles.
+This plot demonstrates again that vegetables and fruits are much more popular than other aisles!
+
+##### Step 4: Demonstrate the most popular items in select aisles.
+
+Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table. Will filter by the above aisles, count the most popular aisles in each. Then will rank each of the 3 aisles, for only the top 3 n's, and arrange them most popular to least popular for each aisle.
 
 ```{r}
 instacart %>% 
@@ -77,7 +85,9 @@ instacart %>%
 ```
 
 
-Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table). Step 1: look only at those items. Step 2: summarize to find mean hour of day at which each item ordered. Step 3: find that mean for each day of week
+##### Step 5: Demonstrate mean hour of day for select items ordered, on each day of the week. 
+
+Make a table showing the mean hour of the day at which "Pink Lady Apples" and "Coffee Ice Cream" are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table). First, filter only these items. Then group by the products in question and day of week, and summarize to find the mean hour of the day at which each item is ordered. Finally, reformat table for easier visualization. 
 
 ```{r}
 instacart %>% 
@@ -87,10 +97,11 @@ instacart %>%
   pivot_wider(
     names_from = order_dow,
     values_from = mean_hour
-  )
+  ) %>% 
+  knitr::kable()
 ```
 
-
+For every day of the week, coffee ice cream is ordered later in the day than apples. Dessert is important.
 
 ## Problem 2
 
