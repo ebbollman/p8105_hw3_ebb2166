@@ -194,3 +194,41 @@ activity_df %>%
 A quick boxplot on the same concept also demonstrates that all of the 'boxes' are low activity, such that 75% of activity counts for most days were 500 or fewer, suggesting this individual spends most of the day at rest or sedentary with brief periods of increased activity. 
 
 ## Problem 3
+
+##### Step 1: Read and tidy NOAA dataset
+
+```{r}
+data("ny_noaa")
+ny_noaa
+```
+
+```{r}
+noaa_tidy_df = 
+  ny_noaa %>% 
+  separate(
+    date,
+    into = c("year", "month", "day"),
+    sep = "-", 
+    convert = TRUE
+  ) %>% 
+  mutate_at(vars(tmax:tmin), as.double) %>% 
+  mutate(
+    prcp = (prcp/10),
+    tmax = (tmax/10),
+    tmin = (tmin/10)
+  )
+```
+
+This dataset contains `r nrow(noaa_tidy_df)` weather observations from `r noaa_tidy_df %>% distinct(id) %>% count()` weather stations in NY state from the years `r noaa_tidy_df %>% pull(year) %>% min()` and `r noaa_tidy_df %>% pull(year) %>% max()`. 
+
+```{r}
+noaa_tidy_df %>% 
+  count(snow) %>% 
+  drop_na(snow) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 6) %>% 
+  arrange(rank) %>% 
+  knitr::kable()
+```
+
+As this table shows, the most common observation by far was 0 snowfall (with absent reporting removed), followed by snowfalls ranging from 1 - 7cm. 
